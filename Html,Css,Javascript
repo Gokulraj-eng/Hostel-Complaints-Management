@@ -1,247 +1,179 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Hostel Complaint Management Portal</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Hostel Complaint Portal - Frontend</title>
   <style>
-    body {
-      font-family: 'Poppins', sans-serif;
-      background-color: #f3f6fc;
-      margin: 0;
-      padding: 0;
+    :root{
+      --bg:#f6f8fb;
+      --card:#ffffff;
+      --accent:#4f46e5;
+      --muted:#6b7280;
+      --success:#10b981;
+      --danger:#ef4444;
+      --max-width:1000px;
+      --radius:12px;
+      --glass: rgba(255,255,255,0.6);
+      font-family: Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
     }
 
-    .container {
-      max-width: 700px;
-      margin: 50px auto;
-      background: #fff;
-      padding: 30px;
-      border-radius: 15px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-      text-align: center;
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      background:linear-gradient(180deg,var(--bg),#eef2ff 60%);
+      color:#111827;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+      padding:40px 20px;
+      display:flex;
+      justify-content:center;
+      align-items:flex-start;
+      min-height:100vh;
     }
 
-    h1 {
-      color: #2c3e50;
+    .container{
+      width:100%;
+      max-width:var(--max-width);
+      display:grid;
+      grid-template-columns: 1fr 420px;
+      gap:28px;
+      align-items:start;
     }
 
-    input, textarea {
-      width: 90%;
-      padding: 10px;
-      margin: 10px 0;
-      border-radius: 8px;
-      border: 1px solid #bdc3c7;
-      font-size: 15px;
+    .card{
+      background:var(--card);
+      border-radius:var(--radius);
+      padding:22px;
+      box-shadow:0 6px 18px rgba(17,24,39,0.08);
     }
 
-    button {
-      background-color: #3498db;
-      color: white;
-      border: none;
-      border-radius: 8px;
-      padding: 10px 20px;
-      margin-top: 10px;
-      cursor: pointer;
+    header.site-title{
+      margin-bottom:16px;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
     }
 
-    button:hover {
-      background-color: #2980b9;
+    header .brand{
+      display:flex;gap:12px;align-items:center;
     }
 
-    .logout {
-      background-color: #e74c3c;
+    .logo{
+      width:44px;height:44px;border-radius:10px;
+      background:linear-gradient(135deg,var(--accent),#06b6d4);
+      display:flex;align-items:center;justify-content:center;color:white;font-weight:700;
+      box-shadow:0 6px 14px rgba(79,70,229,0.18);
     }
 
-    .card {
-      background: #ecf0f1;
-      margin: 20px 0;
-      padding: 20px;
-      border-radius: 10px;
+    h1{font-size:18px;margin:0}
+    p.lead{margin:0;color:var(--muted);font-size:13px}
+
+    /* Complaint Form */
+    form .row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px}
+    label{font-size:13px;color:var(--muted);display:block;margin-bottom:6px}
+
+    input[type=text], select, textarea{
+      width:100%;padding:10px 12px;border-radius:8px;border:1px solid #e6e9ef;background:transparent;
+      font-size:14px;color:#111827;outline:none;transition:box-shadow .15s, border-color .15s;
+    }
+    input[type=text]:focus, select:focus, textarea:focus{box-shadow:0 6px 18px rgba(79,70,229,0.08);border-color:var(--accent)}
+    textarea{min-height:120px;resize:vertical}
+
+    .btn{
+      display:inline-block;padding:10px 16px;border-radius:10px;background:var(--accent);color:#fff;text-decoration:none;border:none;font-weight:600;cursor:pointer;
+      box-shadow:0 8px 22px rgba(79,70,229,0.14);
     }
 
-    ul {
-      list-style-type: none;
-      padding: 0;
+    .muted-note{font-size:13px;color:var(--muted);margin-top:10px}
+
+    /* Right column - Admin preview */
+    .meta{
+      display:flex;flex-direction:column;gap:14px;
     }
 
-    li {
-      background: #f7f9fa;
-      padding: 10px;
-      margin: 10px 0;
-      border-radius: 8px;
-      text-align: left;
+    .status-badge{display:inline-block;padding:6px 10px;border-radius:999px;font-size:13px;color:white}
+    .pending{background:#f59e0b}
+    .inprogress{background:#06b6d4}
+    .completed{background:var(--success)}
+
+    /* static complaints list (admin preview) */
+    .complaints-list{margin-top:12px}
+    .complaint-item{display:flex;justify-content:space-between;align-items:flex-start;padding:12px;border-radius:10px;background:linear-gradient(180deg,rgba(15,23,42,0.02),transparent);margin-bottom:10px}
+    .complaint-left{max-width:65%}
+    .complaint-title{font-weight:600;margin:0 0 6px 0}
+    .complaint-meta{font-size:13px;color:var(--muted)}
+
+    /* footer small */
+    .small{font-size:13px;color:var(--muted)}
+
+    /* Responsive */
+    @media (max-width:900px){
+      .container{grid-template-columns:1fr;}
+      form .row{grid-template-columns:1fr}
     }
 
-    #studentSection, #adminSection {
-      display: none;
-    }
-
-    .back-btn {
-      background-color: #9b59b6;
-    }
   </style>
 </head>
 <body>
   <div class="container">
-    <h1>🏠 Hostel Complaint Portal</h1>
+    <!-- Left: Student Form -->
+    <section class="card">
+      <header class="site-title">
+        <div class="brand">
+          <div class="logo">HC</div>
+          <div>
+            <h1>Hostel Complaint Portal</h1>
+            <p class="lead">Submit and track your hostel complaints easily</p>
+          </div>
+        </div>
+        <div class="small">Student View</div>
+      </header>
 
-    <!-- LOGIN SECTION -->
-    <div id="loginSection">
-      <div class="card">
-        <h2>Student Login</h2>
-        <input type="text" id="studentName" placeholder="Enter your name">
-        <button onclick="studentLogin()">Login</button>
-      </div>
+      <main>
+        <h2 style="margin:0 0 10px 0;font-size:15px;">Lodge a Complaint</h2>
+        <p class="muted-note">Fill the form below — this is a static frontend mock (no JavaScript). Use it to show UI in interviews.</p>
 
-      <div class="card">
-        <h2>Admin Login</h2>
-        <input type="password" id="adminPassword" placeholder="Enter admin password">
-        <button onclick="adminLogin()">Login</button>
-      </div>
-    </div>
+        <form action="#" novalidate>
+          <div class="row">
+            <div>
+              <label for="name">Full Name</label>
+              <input type="text" id="name" name="name" placeholder="Enter your name">
+            </div>
 
-    <!-- STUDENT SECTION -->
-    <div id="studentSection">
-      <h2>Welcome, <span id="studentUser"></span></h2>
-      <textarea id="complaintText" placeholder="Write your complaint here..."></textarea><br>
-      <button onclick="submitComplaint()">Submit Complaint</button>
+            <div>
+              <label for="sid">Student ID / Roll No</label>
+              <input type="text" id="sid" name="sid" placeholder="Enter your roll number">
+            </div>
+          </div>
 
-      <h3>Your Complaints</h3>
-      <ul id="complaintList"></ul>
+          <div class="row">
+            <div>
+              <label for="room">Room No</label>
+              <input type="text" id="room" name="room" placeholder="Enter your room number">
+            </div>
+            <div>
+              <label for="type">Complaint Type</label>
+              <select id="type" name="type">
+                <option>Plumbing</option>
+                <option>Electricity</option>
+                <option>Cleaning</option>
+                <option>Internet</option>
+                <option>Other</option>
+              </select>
+            </div>
+          </div>
 
-      <button class="logout" onclick="logout()">Logout</button>
-    </div>
+          <div style="margin-top:12px">
+            <label for="desc">Description</label>
+            <textarea id="desc" name="desc" placeholder="Describe the issue in 1-2 lines"></textarea>
+          </div>
 
-    <!-- ADMIN SECTION -->
-    <div id="adminSection">
-      <h2>Admin Dashboard</h2>
-      <ul id="adminComplaintList"></ul>
-      <button class="back-btn" onclick="backToLogin()">Back to Login</button>
-    </div>
-  </div>
+          <div style="display:flex;gap:12px;align-items:center;margin-top:14px">
+            <button class="btn" type="submit">Submit Complaint</button>
+            <div class="small">You will receive an acknowledgement ID after submission.</div>
+          </div>
 
-  <script>
-    // Student Login
-    function studentLogin() {
-      const name = document.getElementById("studentName").value.trim();
-      if (name === "") {
-        alert("Please enter your name!");
-        return;
-      }
-      localStorage.setItem("currentStudent", name);
-      showStudentSection();
-      loadStudentComplaints();
-    }
-
-    // Admin Login
-    function adminLogin() {
-      const password = document.getElementById("adminPassword").value;
-      if (password === "admin123") {
-        showAdminSection();
-        loadAdminComplaints();
-      } else {
-        alert("Incorrect password!");
-      }
-    }
-
-    // Show Student Dashboard
-    function showStudentSection() {
-      document.getElementById("loginSection").style.display = "none";
-      document.getElementById("studentSection").style.display = "block";
-      document.getElementById("adminSection").style.display = "none";
-      const name = localStorage.getItem("currentStudent");
-      document.getElementById("studentUser").innerText = name;
-    }
-
-    // Show Admin Dashboard
-    function showAdminSection() {
-      document.getElementById("loginSection").style.display = "none";
-      document.getElementById("studentSection").style.display = "none";
-      document.getElementById("adminSection").style.display = "block";
-    }
-
-    // Logout
-    function logout() {
-      localStorage.removeItem("currentStudent");
-      document.getElementById("studentSection").style.display = "none";
-      document.getElementById("adminSection").style.display = "none";
-      document.getElementById("loginSection").style.display = "block";
-    }
-
-    // Back to login (for admin)
-    function backToLogin() {
-      document.getElementById("adminSection").style.display = "none";
-      document.getElementById("loginSection").style.display = "block";
-    }
-
-    // Submit Complaint
-    function submitComplaint() {
-      const text = document.getElementById("complaintText").value.trim();
-      if (text === "") {
-        alert("Please write your complaint!");
-        return;
-      }
-
-      const student = localStorage.getItem("currentStudent");
-      let complaints = JSON.parse(localStorage.getItem("complaints")) || [];
-
-      complaints.push({ student: student, text: text, status: "Pending" });
-      localStorage.setItem("complaints", JSON.stringify(complaints));
-
-      alert("Complaint submitted successfully!");
-      document.getElementById("complaintText").value = "";
-      loadStudentComplaints();
-    }
-
-    // Load Student Complaints
-    function loadStudentComplaints() {
-      const name = localStorage.getItem("currentStudent");
-      const list = document.getElementById("complaintList");
-      if (!list) return;
-
-      const complaints = JSON.parse(localStorage.getItem("complaints")) || [];
-      list.innerHTML = "";
-      complaints.forEach(c => {
-        if (c.student === name) {
-          list.innerHTML += `<li>${c.text} - <b>${c.status}</b></li>`;
-        }
-      });
-    }
-
-    // Load Admin Complaints
-    function loadAdminComplaints() {
-      const list = document.getElementById("adminComplaintList");
-      if (!list) return;
-
-      const complaints = JSON.parse(localStorage.getItem("complaints")) || [];
-      list.innerHTML = "";
-      complaints.forEach((c, index) => {
-        list.innerHTML += `
-        <li>
-          <b>${c.student}</b>: ${c.text}<br>
-          Status: <b>${c.status}</b><br>
-          <button onclick="updateStatus(${index}, 'Resolved')">Mark Resolved</button>
-        </li>`;
-      });
-    }
-
-    // Update Status
-    function updateStatus(index, status) {
-      let complaints = JSON.parse(localStorage.getItem("complaints")) || [];
-      complaints[index].status = status;
-      localStorage.setItem("complaints", JSON.stringify(complaints));
-      loadAdminComplaints();
-    }
-
-    // Auto Show Section
-    window.onload = function() {
-      const currentStudent = localStorage.getItem("currentStudent");
-      if (currentStudent) {
-        showStudentSection();
-        loadStudentComplaints();
-      }
-    };
-  </script>
+        
 </body>
 </html>
